@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class IntegrationPeripheralProvider {
 
-    private static final String[] SUPPORTED_MODS = new String[]{"mekanism", "powah"};
+    private static final String[] SUPPORTED_MODS = new String[]{"mekanism", "powah", "sable"};
 
     public static void load() {
         ComputerCraftAPI.registerGenericSource(new BeaconIntegration());

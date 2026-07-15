@@ -10,6 +10,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEnti
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.sable.SableHelper;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
@@ -18,6 +19,7 @@ import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.List;
@@ -165,7 +167,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             maxDistance = Math.max(minDistance, maxDistance);
 
             // Calculate Euclidean distance between the player locator and the player in question
-            double distanceFromPlayer = Math.sqrt(getPos().distToCenterSqr(x, y, z));
+            double distanceFromPlayer = Math.sqrt(SableHelper.distanceSqr(getLevel(), Vec3.atCenterOf(getPos()), new Vec3(x, y, z)));
 
             distanceFromPlayer -= minDistance;
             if (distanceFromPlayer > 0) {

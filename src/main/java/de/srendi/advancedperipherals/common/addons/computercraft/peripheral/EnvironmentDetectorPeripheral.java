@@ -92,26 +92,30 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return APConfig.PERIPHERALS_CONFIG.enableEnergyDetector.get();
     }
 
+    private BlockPos environmentPos() {
+        return BlockPos.containing(getGlobalPos());
+    }
+
     @LuaFunction(mainThread = true)
     public final String getBiome() {
-        Optional<ResourceKey<Biome>> biome = getLevel().getBiome(getPos()).unwrapKey();
+        Optional<ResourceKey<Biome>> biome = getLevel().getBiome(environmentPos()).unwrapKey();
         return biome.map(biomeResourceKey -> biomeResourceKey.location().toString()).orElse("unknown");
     }
 
     @LuaFunction(mainThread = true)
     public final int getSkyLightLevel() {
-        return getLevel().getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.SKY, environmentPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getBlockLightLevel() {
-        return getLevel().getBrightness(LightLayer.BLOCK, getPos().offset(0, 1, 0));
+        return getLevel().getBrightness(LightLayer.BLOCK, environmentPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
     public final int getDayLightLevel() {
         Level level = getLevel();
-        int i = level.getBrightness(LightLayer.SKY, getPos().offset(0, 1, 0)) - level.getSkyDarken();
+        int i = level.getBrightness(LightLayer.SKY, environmentPos().offset(0, 1, 0)) - level.getSkyDarken();
         float f = level.getSunAngle(1.0F);
         if (i > 0) {
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
@@ -129,7 +133,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     @LuaFunction(mainThread = true)
     public final boolean isSlimeChunk() {
-        ChunkPos chunkPos = new ChunkPos(getPos());
+        ChunkPos chunkPos = new ChunkPos(environmentPos());
         return WorldgenRandom.seedSlimeChunk(chunkPos.x, chunkPos.z, ((WorldGenLevel) getLevel()).getSeed(), 987234911L).nextInt(10) == 0;
     }
 

@@ -204,6 +204,10 @@ repositories {
             includeModule("thedarkcolour", "kotlinforforge")
         }
     }
+    maven {
+        name = "RyanHCode Maven"
+        url = "https://maven.ryanhcode.dev/releases"
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -299,6 +303,14 @@ dependencies {
     compileOnly "curse.maven:powah-633483:${powah_version}"
     runtimeOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
     runtimeOnly "curse.maven:powah-633483:${powah_version}"
+
+    // Sable Companion
+    // Sable's built-in version of this mod will always take priority, this is just a backup for those who don't have sable!
+    jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:[${sable_companion_version},)")) {
+        version {
+            prefer project.sable_companion_version
+        }
+    }
 
     testModImplementation sourceSets.main.output
 

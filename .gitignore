@@ -34,3 +34,4 @@ forge*changelog.txt
 
 test-files
 logs/
+/.vscode

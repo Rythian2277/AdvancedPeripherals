@@ -11,10 +11,12 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
+import de.srendi.advancedperipherals.common.addons.sable.SableHelper;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -129,6 +131,10 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
 
     protected BlockPos getPos() {
         return owner.getPos();
+    }
+
+    protected Vec3 getGlobalPos() {
+        return SableHelper.toGlobalVec3(owner.getLevel(), getPos());
     }
 
     protected ServerLevel getLevel() {

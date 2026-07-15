@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.computer.ComputerSide;
+import de.srendi.advancedperipherals.common.addons.sable.SableHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
@@ -9,6 +10,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +47,11 @@ public class CoordUtil {
         } else if (maxRange > 0 && range > maxRange) {
             range = maxRange;
         }
+        if (SableHelper.isInPlotGrid(world, pos)) {
+            if (player.level() != world)
+                return false;
+            return SableHelper.rectilinearDistance(world, Vec3.atCenterOf(pos), player.position()) <= range;
+        }
         return isPlayerInBlockRange(pos, world, player, (double) range);
     }
 
@@ -69,10 +76,14 @@ public class CoordUtil {
         if (pos == null || world == null || player == null)
             return false;
 
-        // It shouldn't multiply by 2 here, but it should have the same behavior as isInRange when x == y == z == range
         x = Math.min(Math.abs(x), maxRange != -1 ? maxRange : Integer.MAX_VALUE);
         y = Math.min(Math.abs(y), maxRange != -1 ? maxRange : Integer.MAX_VALUE);
         z = Math.min(Math.abs(z), maxRange != -1 ? maxRange : Integer.MAX_VALUE);
+        if (SableHelper.isInPlotGrid(world, pos)) {
+            if (player.level() != world)
+                return false;
+            return SableHelper.rectilinearDistance(world, Vec3.atCenterOf(pos), player.position()) <= (double) (x + y + z);
+        }
         return isPlayerInBlockRangeXYZ(pos, world, player, (double) x, (double) y, (double) z, maxRange);
     }
 
@@ -95,11 +106,15 @@ public class CoordUtil {
         if (blockPos == null || world == null || player == null)
             return false;
 
-        double i = Math.abs(player.getX() - blockPos.getX());
-        double j = Math.abs(player.getZ() - blockPos.getZ());
-        // Check if the distance of the player is within the max range of the player detector
-        // Use manhattan distance, not euclidean distance to keep same behavior than other `isInRange` functions
-        if (i + j > (maxRange != -1 ? maxRange : Integer.MAX_VALUE))
+        double distance;
+        if (SableHelper.isInPlotGrid(world, blockPos)) {
+            if (player.level() != world)
+                return false;
+            distance = SableHelper.rectilinearDistance(world, Vec3.atCenterOf(blockPos), player.position());
+        } else {
+            distance = Math.abs(player.getX() - blockPos.getX()) + Math.abs(player.getZ() - blockPos.getZ());
+        }
+        if (distance > (maxRange != -1 ? maxRange : Integer.MAX_VALUE))
             return false;
         return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos.getX(), firstPos.getY(), firstPos.getZ(), secondPos.getX(), secondPos.getY(), secondPos.getZ())).contains(player);
     }
